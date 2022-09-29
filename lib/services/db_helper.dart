@@ -24,7 +24,36 @@ class DataHelper {
       )
     ''');
     await db.execute('''
-      INSERT INTO cashflow (type,amount, description, date) VALUES (0,100000, 'Penghasilan', '2021-01-01')''');
+      CREATE TABLE users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT,
+      password TEXT
+      )
+    ''');
+    await db.execute(''' 
+    INSERT INTO users (username, password) VALUES ('user', 'user')
+    ''');
+  }
+
+  //auth users
+  Future<bool> authUser(String username, String password) async {
+    db = await initDb();
+    var result = await db.rawQuery('''
+      SELECT * FROM users WHERE username = '$username' AND password = '$password'
+    ''');
+    if (result.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //update password
+  Future<void> updatePassword(String password) async {
+    db = await initDb();
+    await db.rawUpdate('''
+      UPDATE users SET password = '$password' WHERE username = 'user'
+    ''');
   }
 
   //Select Cashflow
@@ -41,6 +70,16 @@ class DataHelper {
         date: maps[i]['date'],
       );
     });
+  }
+
+  //Insert Cashflow
+  Future<void> insertCashFlow(CashFlow cashFlow) async {
+    Database db = await initDb();
+    await db.insert(
+      'cashflow',
+      cashFlow.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future close() async {

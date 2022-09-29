@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 
+import '../services/db_helper.dart';
 import 'home.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<bool> login() async {
+    return await DataHelper()
+        .authUser(_usernameController.text, _passwordController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +30,7 @@ class LoginPage extends StatelessWidget {
             children: [
               Image.asset('logo.png'),
               TextFormField(
+                controller: _usernameController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Username',
@@ -23,6 +38,8 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               TextFormField(
+                obscureText: true,
+                controller: _passwordController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Password',
@@ -39,14 +56,57 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const HomePage();
-                      },
-                    ),
-                  );
+                  (_usernameController.text == "" ||
+                          _passwordController.text == "")
+                      ? showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Error'),
+                              content: const Text(
+                                  'Username atau Password tidak boleh kosong'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                      : login().then(
+                          (value) {
+                            if (value) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HomePage(),
+                                ),
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text('Error'),
+                                    content: const Text(
+                                        'Username atau Password salah'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        );
                 },
                 child: const Text('Login'),
               ),

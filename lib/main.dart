@@ -1,8 +1,7 @@
-import 'package:buku_kas_nusantara/pages/detail_cashflow.dart';
+import 'package:buku_kas_nusantara/pages/list_cashflow.dart';
 import 'package:buku_kas_nusantara/pages/login_page.dart';
-import 'package:buku_kas_nusantara/pages/pemasukan.dart';
 import 'package:buku_kas_nusantara/pages/pengaturan.dart';
-import 'package:buku_kas_nusantara/pages/pengeluaran.dart';
+import 'package:buku_kas_nusantara/pages/input_cash_flow.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,8 +20,10 @@ class MyApp extends StatelessWidget {
       ),
       home: const LoginPage(),
       routes: {
-        '/pemasukan': (context) => const PemasukanPage(),
-        '/pengeluaran': (context) => const PengeluaranPage(),
+        '/pemasukan': (context) => const InputCashFlowPage(type: 'pemasukan'),
+        '/pengeluaran': (context) => const InputCashFlowPage(
+              type: 'pengeluaran',
+            ),
         '/cashFlow': (context) => const CashFlowPage(),
         '/pengaturan': (context) => const PengaturanPage(),
       },
