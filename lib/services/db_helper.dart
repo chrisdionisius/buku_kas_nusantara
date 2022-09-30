@@ -49,11 +49,17 @@ class DataHelper {
   }
 
   //update password
-  Future<void> updatePassword(String password) async {
+  Future<bool> updatePassword(String oldPassword, String newPassword) async {
     db = await initDb();
-    await db.rawUpdate('''
-      UPDATE users SET password = '$password' WHERE username = 'user'
-    ''');
+    var result = await db.rawQuery(
+        'SELECT * FROM users WHERE username = "user" AND password = "$oldPassword"');
+    if (result.isNotEmpty) {
+      await db.rawUpdate(
+          'UPDATE users SET password = "$newPassword" WHERE username = "user"');
+      return true;
+    } else {
+      return false;
+    }
   }
 
   //Select Cashflow
@@ -61,6 +67,37 @@ class DataHelper {
     Database db = await initDb();
     final List<Map<String, dynamic>> maps =
         await db.query('cashflow', orderBy: 'date');
+    return List.generate(maps.length, (i) {
+      return CashFlow(
+        id: maps[i]['id'],
+        type: maps[i]['type'],
+        amount: maps[i]['amount'],
+        description: maps[i]['description'],
+        date: maps[i]['date'],
+      );
+    });
+  }
+
+  Future<List<CashFlow>> selectCashFlowByMonth() async {
+    Database db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT * FROM cashflow WHERE strftime('%m', date) = strftime('%m', 'now') order by date
+    ''');
+    return List.generate(maps.length, (i) {
+      return CashFlow(
+        id: maps[i]['id'],
+        type: maps[i]['type'],
+        amount: maps[i]['amount'],
+        description: maps[i]['description'],
+        date: maps[i]['date'],
+      );
+    });
+  }
+
+  Future<List<CashFlow>> selectCashflowByDate(String date) async {
+    Database db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.query('cashflow',
+        where: 'date = ?', whereArgs: [date], orderBy: 'date');
     return List.generate(maps.length, (i) {
       return CashFlow(
         id: maps[i]['id'],

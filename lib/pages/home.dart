@@ -4,6 +4,8 @@ import 'package:buku_kas_nusantara/services/db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/graph_card.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -14,22 +16,22 @@ class HomePage extends StatefulWidget {
 final List<Menu> _listMenu = [
   Menu(
     name: 'Tambah Pemasukan',
-    icon: '',
+    icon: 'income.png',
     route: '/pemasukan',
   ),
   Menu(
     name: 'Tambah Pengeluaran',
-    icon: '',
+    icon: 'expense.png',
     route: '/pengeluaran',
   ),
   Menu(
     name: 'Detail Cashflow',
-    icon: '',
+    icon: 'report.png',
     route: '/cashFlow',
   ),
   Menu(
     name: 'Pengaturan',
-    icon: '',
+    icon: 'setting.png',
     route: '/pengaturan',
   ),
 ];
@@ -96,15 +98,13 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(color: Colors.green, fontSize: 20),
               ),
             ),
-            Container(
+            SizedBox(
               height: height / 3,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-              ),
+              child: const GraphCard(),
             ),
             Container(
               padding: const EdgeInsets.all(20),
-              height: height - 300,
+              height: height - 280,
               child: GridView.count(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -117,18 +117,20 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         Navigator.pushNamed(context, menu.route!);
                       },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset('logo.png', width: height / 5),
-                          Text(
-                            menu.name!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 15,
+                      child: Card(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(menu.icon!, width: height / 5),
+                            Text(
+                              menu.name!,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 15,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                 ],
