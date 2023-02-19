@@ -94,21 +94,6 @@ class DataHelper {
     });
   }
 
-  Future<List<CashFlow>> selectCashflowByDate(String date) async {
-    Database db = await initDb();
-    final List<Map<String, dynamic>> maps = await db.query('cashflow',
-        where: 'date = ?', whereArgs: [date], orderBy: 'date');
-    return List.generate(maps.length, (i) {
-      return CashFlow(
-        id: maps[i]['id'],
-        type: maps[i]['type'],
-        amount: maps[i]['amount'],
-        description: maps[i]['description'],
-        date: maps[i]['date'],
-      );
-    });
-  }
-
   //Insert Cashflow
   Future<void> insertCashFlow(CashFlow cashFlow) async {
     Database db = await initDb();
